@@ -9,6 +9,7 @@ data/
 backend/.venv/
 __pycache__/
 *.pyc
+.pytest_cache/
 
 # node / vite
 frontend/node_modules/
