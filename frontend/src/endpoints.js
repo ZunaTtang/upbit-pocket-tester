@@ -120,7 +120,8 @@ export const ENDPOINTS = [
   // ---- 2. 계좌 ------------------------------------------------------------
   {
     id: "accounts.list", category: "accounts", method: "GET", path: "/v1/accounts",
-    auth: true, permission: "asset_view", label: "전체 계좌 조회", desc: "보유 자산 목록.",
+    auth: true, permission: "asset_view", label: "전체 계좌 조회",
+    desc: "활성 키가 속한 포켓의 보유 자산. 서브포켓 키면 그 서브포켓의 잔고가 나옵니다(서브가 '자기' 잔고 볼 땐 여기를 쓰세요).",
     fields: [],
   },
   {
@@ -333,6 +334,7 @@ export const ENDPOINTS = [
   {
     id: "pockets.assets", category: "pockets", method: "GET", path: "/v1/pockets/assets",
     auth: true, permission: "pocket_manage", pocketType: "main", label: "(c) 서브포켓 잔고 조회",
+    desc: "메인(매니저) 키가 특정 서브포켓의 잔고를 uuid로 들여다보는 관리 기능(포켓관리 권한). 서브포켓 키로 '자기' 잔고를 보려면 '2. 계좌 → 전체 계좌 조회'를 쓰세요.",
     fields: [{ name: "uuid", label: "uuid(포켓, required)", type: "pocket", required: true }],
   },
   {
