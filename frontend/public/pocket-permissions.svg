@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 900 620" width="900" height="620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ttl dsc">
+<title id="ttl">업비트 포켓 권한 가이드</title>
+<desc id="dsc">메인포켓 키는 포켓관리 권한으로 포켓 전체를 관리·감독하고 외부 입출금을 하며, 서브포켓 키는 자산이전 권한으로 자기 포켓의 이전만 한다. 서브포켓에 돈을 넣을 땐 메인키가 메인에서 서브로 이전하고, 뺄 땐 서브키가 메인으로 이전한 뒤 메인키가 외부로 출금한다.</desc>
+<defs>
+<marker id="ahg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5F5E5A"/></marker>
+<marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#185FA5"/></marker>
+<marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#534AB7"/></marker>
+</defs>
+<rect x="0" y="0" width="900" height="620" rx="14" fill="#ffffff"/>
+<g font-family="-apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+
+<text x="450" y="30" text-anchor="middle" font-size="19" font-weight="600" fill="#1e293b">업비트 포켓 권한 · 한눈에 보기</text>
+<text x="450" y="51" text-anchor="middle" font-size="12.5" fill="#5F5E5A">파랑 = 메인포켓 키 · 보라 = 서브포켓 키</text>
+
+<rect x="20" y="66" width="415" height="258" rx="12" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<text x="40" y="96" font-size="15" font-weight="600" fill="#042C53">메인포켓 키 · 포켓관리 권한</text>
+<text x="40" y="116" font-size="12.5" fill="#185FA5">포켓 전체를 관리·감독 (다른 포켓도 조회)</text>
+<text x="40" y="150" font-size="13" fill="#0C447C">(a) 포켓 목록 · 구조 조회</text>
+<text x="40" y="178" font-size="13" fill="#0C447C">(b) 포켓별 API 키 · 실권한 조회</text>
+<text x="40" y="206" font-size="13" fill="#0C447C">(c) 다른 서브포켓 잔고 조회</text>
+<text x="40" y="234" font-size="13" fill="#0C447C">(d)(e) 메인↔서브 자산 이전 · 내역</text>
+<text x="40" y="262" font-size="13" fill="#0C447C">외부 입금 · 출금  (메인 전용)</text>
+<text x="40" y="296" font-size="12" fill="#185FA5">↳ a–e + 외부 입출금 = 메인 키만 가능</text>
+
+<rect x="465" y="66" width="415" height="258" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="485" y="96" font-size="15" font-weight="600" fill="#26215C">서브포켓 키 · 자산이전 권한</text>
+<text x="485" y="116" font-size="12.5" fill="#534AB7">자기 서브포켓 안에서만</text>
+<text x="485" y="150" font-size="13" fill="#3C3489">(f)(g) 서브→메인 / 서브→서브 이전 · 내역</text>
+<text x="505" y="172" font-size="12" fill="#534AB7">↳ 서브 키 전용 (메인은 (d)로 대체)</text>
+<text x="485" y="202" font-size="13" fill="#3C3489">자기 잔고 · 주문: 계좌 · 주문 탭에서</text>
+<text x="485" y="232" font-size="13" fill="#3C3489">불가: 외부 입금 · 출금</text>
+<text x="485" y="260" font-size="13" fill="#3C3489">불가: 포켓 관리 · 다른 포켓 조회</text>
+<text x="485" y="296" font-size="12" fill="#534AB7">↳ f·g(자산이전) = 서브 키만 가능</text>
+
+<rect x="20" y="336" width="860" height="40" rx="10" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
+<text x="450" y="361" text-anchor="middle" font-size="13" fill="#2C2C2A">공통 (메인·서브 모두 · 자기 포켓 기준): 시세 · 전체 계좌 조회 · 주문 / 주문조회</text>
+
+<text x="40" y="410" font-size="15" font-weight="600" fill="#1e293b">서브포켓에 돈 넣고 빼기</text>
+
+<rect x="40" y="448" width="175" height="62" rx="12" fill="#F1EFE8" stroke="#888780" stroke-width="1.5"/>
+<text x="127" y="476" text-anchor="middle" font-size="14" font-weight="600" fill="#2C2C2A">외부</text>
+<text x="127" y="496" text-anchor="middle" font-size="12" fill="#5F5E5A">은행 · 블록체인</text>
+<rect x="362" y="448" width="175" height="62" rx="12" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<text x="449" y="476" text-anchor="middle" font-size="14" font-weight="600" fill="#042C53">메인포켓</text>
+<text x="449" y="496" text-anchor="middle" font-size="12" fill="#185FA5">메인 키</text>
+<rect x="685" y="448" width="175" height="62" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="772" y="476" text-anchor="middle" font-size="14" font-weight="600" fill="#26215C">서브포켓</text>
+<text x="772" y="496" text-anchor="middle" font-size="12" fill="#534AB7">서브 키</text>
+
+<line x1="222" y1="479" x2="355" y2="479" stroke="#5F5E5A" stroke-width="2" marker-start="url(#ahg)" marker-end="url(#ahg)"/>
+<text x="288" y="468" text-anchor="middle" font-size="11.5" fill="#5F5E5A">입금 · 출금</text>
+<text x="288" y="500" text-anchor="middle" font-size="11.5" fill="#5F5E5A">메인 키 전용</text>
+
+<line x1="543" y1="470" x2="680" y2="470" stroke="#185FA5" stroke-width="2" marker-end="url(#ahb)"/>
+<text x="611" y="461" text-anchor="middle" font-size="11.5" fill="#185FA5">넣기 · (d) 메인키 이전</text>
+<line x1="680" y1="494" x2="543" y2="494" stroke="#534AB7" stroke-width="2" marker-end="url(#ahp)"/>
+<text x="611" y="508" text-anchor="middle" font-size="11.5" fill="#534AB7">빼기 · (f) 서브키 이전</text>
+
+<text x="450" y="548" text-anchor="middle" font-size="13" fill="#2C2C2A">서브는 외부와 직접 입출금 불가 — 반드시 메인포켓을 거칩니다.</text>
+<text x="450" y="576" text-anchor="middle" font-size="12" fill="#5F5E5A">넣기: 외부→메인(입금) → (d) 메인키로 서브 이동   ·   빼기: (f) 서브키로 메인 이동 → 메인키로 외부 출금</text>
+</g>
+</svg>

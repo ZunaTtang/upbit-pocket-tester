@@ -89,6 +89,7 @@ export default function Sidebar({ tab, setTab }) {
       <div className="mt-2 border-t border-ink-800 pt-1">
         <NavButton item={{ id: "history", label: "히스토리" }} icon="🕑" />
         <NavButton item={{ id: "settings", label: "설정/안전장치" }} icon="⚙" />
+        <NavButton item={{ id: "help", label: "도움말 · 포켓 권한" }} icon="❓" />
       </div>
     </nav>
   );

@@ -8,6 +8,7 @@ import KeysTab from "./tabs/KeysTab";
 import CategoryTab from "./tabs/CategoryTab";
 import HistoryTab from "./tabs/HistoryTab";
 import SettingsTab from "./tabs/SettingsTab";
+import HelpTab from "./tabs/HelpTab";
 
 export default function App() {
   const { loadAll, toast } = useStore();
@@ -51,6 +52,7 @@ export default function App() {
           {isCategory && <CategoryTab key={tab} categoryId={tab} />}
           {tab === "history" && <HistoryTab />}
           {tab === "settings" && <SettingsTab />}
+          {tab === "help" && <HelpTab />}
         </main>
       </div>
 
