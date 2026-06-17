@@ -353,7 +353,7 @@ export const ENDPOINTS = [
     maxRangeDays: 7,
     fields: [
       { name: "states", label: "states[](콤마: submitted,processing,done,failed)", type: "array" },
-      { name: "uuids", label: "uuids[](포켓)", type: "pocket-array" },
+      { name: "uuids", label: "uuids[] (이전 UUID, 콤마 — 포켓 UUID 아님)", type: "array" },
       { name: "identifiers", label: "identifiers[](콤마)", type: "array" },
       f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "currency" }, f.limit(20), f.orderBy("desc"),
     ],
@@ -382,7 +382,7 @@ export const ENDPOINTS = [
     fields: [
       { name: "direction", label: "direction", type: "select", options: ["all", "in", "out"], default: "all" },
       { name: "states", label: "states[](콤마)", type: "array" },
-      { name: "uuids", label: "uuids[](포켓)", type: "pocket-array" },
+      { name: "uuids", label: "uuids[] (이전 UUID, 콤마 — 포켓 UUID 아님)", type: "array" },
       { name: "identifiers", label: "identifiers[](콤마)", type: "array" },
       f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "currency" }, f.limit(20), f.orderBy("desc"),
     ],
