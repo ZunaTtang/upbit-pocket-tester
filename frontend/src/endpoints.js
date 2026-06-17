@@ -349,8 +349,9 @@ export const ENDPOINTS = [
   {
     id: "pockets.universal_transfers.list", category: "pockets", method: "GET", path: "/v1/pockets/universal_transfers",
     auth: true, permission: "pocket_manage", pocketType: "main", preset: true, label: "(e) 메인포켓 이전 목록",
-    desc: "필터: identifiers / uuids / states / 기간 / currency. (업비트 목록 API는 from·to 필터를 지원하지 않아 제외했습니다 — 특정 이전을 찾을 땐 identifier 하나가 가장 확실)",
+    desc: "기본은 최근 전체 이전을 보여줍니다(필터 없음). 특정 건은 '상세 검색'에서 identifier/uuid/상태/기간으로 거르세요. (from·to 필터는 업비트 목록 API 미지원)",
     maxRangeDays: 7,
+    basicFields: ["currency", "limit", "order_by"],
     fields: [
       { name: "states", label: "states[](콤마: submitted,processing,done,failed)", type: "array" },
       { name: "uuids", label: "uuids[] (이전 UUID, 콤마 — 포켓 UUID 아님)", type: "array" },
@@ -377,8 +378,9 @@ export const ENDPOINTS = [
   {
     id: "pockets.transfers.list", category: "pockets", method: "GET", path: "/v1/pockets/transfers",
     auth: true, permission: "transfer", pocketType: "sub", preset: true, label: "(g) 서브포켓 이전 목록",
-    desc: "방향은 direction(in/out/all)으로 지정. 필터: identifiers / uuids / states / 기간 / currency. (to 필터는 목록 API 미지원이라 제외)",
+    desc: "기본은 최근 전체 이전(direction=all)을 보여줍니다. 특정 건은 '상세 검색'에서 identifier/uuid/상태/기간으로 거르세요. (to 필터는 목록 API 미지원)",
     maxRangeDays: 7,
+    basicFields: ["direction", "currency", "limit", "order_by"],
     fields: [
       { name: "direction", label: "direction", type: "select", options: ["all", "in", "out"], default: "all" },
       { name: "states", label: "states[](콤마)", type: "array" },

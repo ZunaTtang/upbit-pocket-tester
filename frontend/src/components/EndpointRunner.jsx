@@ -45,6 +45,10 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
     marketCatalog,
     loadMarketCatalog,
   } = useStore();
+  // 기본/상세 필드 분리: ep.basicFields 가 있으면 그 외 필드는 '상세 검색'으로 접는다.
+  const hasAdvSplit = Array.isArray(ep.basicFields) && ep.basicFields.length > 0;
+  const basicFields = hasAdvSplit ? ep.fields.filter((f) => ep.basicFields.includes(f.name)) : ep.fields;
+  const advancedFields = hasAdvSplit ? ep.fields.filter((f) => !ep.basicFields.includes(f.name)) : [];
   const [params, setParams] = useState(() => defaultParams(ep, initialParams));
   const [presetSel, setPresetSel] = useState("");
   const [open, setOpen] = useState(nested);
@@ -55,6 +59,13 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
   const [confirmPayload, setConfirmPayload] = useState(null);
   const [dynOpts, setDynOpts] = useState({});
   const [fieldErr, setFieldErr] = useState(null);
+  // 상세 검색 섹션: 기본 접힘, 단 상세 필드에 이미 값이 있으면(검증 자동값/프리셋) 펼침.
+  const [advOpen, setAdvOpen] = useState(() =>
+    advancedFields.some((f) => {
+      const v = params[f.name];
+      return Array.isArray(v) ? v.length > 0 : v !== "" && v != null && v !== false;
+    })
+  );
 
   const isWrite = ep.write || ep.method !== "GET";
 
@@ -329,8 +340,8 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
             </div>
           )}
 
-          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-3">
-            {ep.fields.map((fld) => (
+          {(() => {
+            const cell = (fld) => (
               <div
                 key={fld.name}
                 className={
@@ -346,11 +357,34 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
                   ctx={fieldCtx}
                 />
               </div>
-            ))}
-            {ep.fields.length === 0 && (
-              <p className="empty-state sm:col-span-2">파라미터 없음.</p>
-            )}
-          </div>
+            );
+            return (
+              <>
+                <div className="grid sm:grid-cols-2 gap-x-4 gap-y-3">
+                  {basicFields.map(cell)}
+                  {ep.fields.length === 0 && (
+                    <p className="empty-state sm:col-span-2">파라미터 없음. 바로 호출하세요.</p>
+                  )}
+                </div>
+                {advancedFields.length > 0 && (
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setAdvOpen((o) => !o)}
+                      className="text-xs font-semibold text-brand-700 hover:underline"
+                    >
+                      {advOpen ? "▾" : "▸"} 🔍 상세 검색 (필터 {advancedFields.length}개)
+                    </button>
+                    {advOpen && (
+                      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-3 mt-2 pt-3 border-t border-ink-100">
+                        {advancedFields.map(cell)}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            );
+          })()}
 
           {fieldErr && <div className="inline-error mt-3">{fieldErr}</div>}
 
