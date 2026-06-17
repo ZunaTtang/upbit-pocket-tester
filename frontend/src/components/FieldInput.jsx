@@ -312,12 +312,15 @@ export default function FieldInput({ field: fld, value: v, onChange, ctx }) {
       )}:${pad(d.getMinutes())}`;
     }
 
+    // Upbit 시간 파라미터는 밀리초(소수 초)를 거부 → ISO 에서 .SSS 제거 (...:13.717Z → ...:13Z).
+    const isoNoMs = (t) => new Date(t).toISOString().replace(/\.\d{3}Z$/, "Z");
+
     // 빠른 칩: start_time 은 now - 기간, end_time 은 now. 그 외 필드는 now.
     function quickRange(ms) {
       const now = Date.now();
       const isStart = fld.name === "start_time";
       const target = isStart && ms ? now - ms : now;
-      onChange(new Date(target).toISOString());
+      onChange(isoNoMs(target));
     }
 
     return (
@@ -333,7 +336,7 @@ export default function FieldInput({ field: fld, value: v, onChange, ctx }) {
           />
           <button
             type="button"
-            onClick={() => onChange(new Date().toISOString())}
+            onClick={() => onChange(isoNoMs(Date.now()))}
             className="btn btn-ghost btn-sm"
           >
             지금
@@ -348,7 +351,7 @@ export default function FieldInput({ field: fld, value: v, onChange, ctx }) {
               const val = e.target.value;
               if (!val) return;
               const t = Date.parse(val); // 로컬 시간으로 파싱됨
-              if (!Number.isNaN(t)) onChange(new Date(t).toISOString());
+              if (!Number.isNaN(t)) onChange(isoNoMs(t));
             }}
           />
           <button type="button" onClick={() => quickRange(24 * 3600 * 1000)} className="btn btn-ghost btn-sm">
