@@ -169,11 +169,15 @@ export const ENDPOINTS = [
   {
     id: "orders.open", category: "orders", method: "GET", path: "/v1/orders/open",
     auth: true, permission: "order_view", preset: true, label: "미체결 주문 리스트(open)",
+    desc: "기본은 미체결 주문 전체. 마켓/상태 등은 '상세 검색'에서.",
+    basicFields: ["limit", "order_by"],
     fields: [{ name: "market", label: "market", type: "market", required: false }, { name: "state", label: "state", type: "select", options: ["", "wait", "watch"], default: "" }, { name: "states", label: "states[](콤마: wait,watch)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "orders.closed", category: "orders", method: "GET", path: "/v1/orders/closed",
     auth: true, permission: "order_view", preset: true, label: "종료 주문 리스트(closed)",
+    desc: "기본은 종료 주문 전체. 마켓/상태/기간 등은 '상세 검색'에서.",
+    basicFields: ["limit", "order_by"],
     fields: [{ name: "market", label: "market", type: "market", required: false }, { name: "state", label: "state", type: "select", options: ["", "done", "cancel"], default: "" }, { name: "states", label: "states[](콤마: done,cancel)", type: "array" }, f.startTime(), f.endTime(), f.limit(100), f.orderBy("desc")],
   },
   {
@@ -237,8 +241,9 @@ export const ENDPOINTS = [
   {
     id: "deposits.list", category: "deposits", method: "GET", path: "/v1/deposits",
     auth: true, permission: "deposit_view", pocketType: "main", preset: true, label: "입금 리스트 조회",
-    desc: "새로고침하며 외부 입금이 잡히는지 확인.",
-    fields: [{ name: "currency", label: "currency", type: "currency", placeholder: "BTC / KRW" }, { name: "state", label: "state", type: "text", placeholder: "예: ACCEPTED" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
+    desc: "기본은 최근 입금 전체를 보여줍니다. 통화/상태/기간 등은 '상세 검색'에서.",
+    basicFields: ["limit", "order_by"],
+    fields: [{ name: "currency", label: "currency", type: "currency", placeholder: "BTC / KRW" }, { name: "state", label: "state(상태)", type: "select", options: ["", "PROCESSING", "ACCEPTED", "CANCELLED", "REJECTED", "TRAVEL_RULE_SUSPECTED", "REFUNDING", "REFUNDED"], default: "" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "deposits.get", category: "deposits", method: "GET", path: "/v1/deposit",
@@ -272,7 +277,9 @@ export const ENDPOINTS = [
   {
     id: "withdraws.list", category: "withdraws", method: "GET", path: "/v1/withdraws",
     auth: true, permission: "withdraw_view", pocketType: "main", label: "출금 리스트 조회",
-    fields: [{ name: "currency", label: "currency", type: "currency" }, { name: "state", label: "state", type: "text", placeholder: "예: DONE" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
+    desc: "기본은 최근 출금 전체를 보여줍니다. 통화/상태/기간 등은 '상세 검색'에서.",
+    basicFields: ["limit", "order_by"],
+    fields: [{ name: "currency", label: "currency", type: "currency" }, { name: "state", label: "state(상태)", type: "select", options: ["", "WAITING", "PROCESSING", "DONE", "FAILED", "CANCELLED", "REJECTED"], default: "" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "withdraws.get", category: "withdraws", method: "GET", path: "/v1/withdraw",
