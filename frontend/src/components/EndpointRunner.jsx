@@ -8,9 +8,13 @@ import ReqRespViewer from "./ReqRespViewer";
 import ConfirmModal from "./ConfirmModal";
 import VerifyChecklist from "./VerifyChecklist";
 import { CopyButton } from "./JsonView";
+import OrderMarketInfo from "./OrderMarketInfo";
 
 // write actions that demand the high-risk acknowledgement gate in ConfirmModal.
 const HIGH_RISK_IDS = new Set(["withdraws.coin", "withdraws.krw", "orders.cancel_bulk"]);
+
+// endpoint-id → 폼 위에 붙는 전용 보조 위젯.
+const FIELD_HELPERS = { "orders.create": OrderMarketInfo };
 
 // 탭 전환 helper — App 이 wb:navtab 을 듣고 setTab 한다.
 function navTab(tabId) {
@@ -267,6 +271,7 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
   };
 
   const highRisk = HIGH_RISK_IDS.has(ep.id);
+  const Helper = FIELD_HELPERS[ep.id];
 
   // gate.reason 에 따라 안내 액션을 가른다.
   const gateNeedsKey = !gate.ok && gate.reason && gate.reason.includes("활성 API 키");
@@ -339,6 +344,8 @@ export default function EndpointRunner({ endpoint: ep, initialParams, nested = f
               )}
             </div>
           )}
+
+          {!nested && Helper && <Helper params={params} setField={setField} />}
 
           {(() => {
             const cell = (fld) => (
