@@ -50,9 +50,10 @@ export const CATEGORIES = [
 
 // ---- field shorthands -----------------------------------------------------
 const f = {
-  market: (req = true) => ({ name: "market", label: "마켓 코드", type: "text", required: req, placeholder: "KRW-BTC" }),
-  currency: (req = true) => ({ name: "currency", label: "통화(currency)", type: "text", required: req, placeholder: "BTC / KRW" }),
-  netType: () => ({ name: "net_type", label: "네트워크(net_type)", type: "text", placeholder: "예: BTC, ETH, TRX (멀티 네트워크 코인 필수)" }),
+  market: (req = true) => ({ name: "market", label: "마켓 코드", type: "market", required: req, placeholder: "KRW-BTC" }),
+  markets: (req = true) => ({ name: "markets", label: "마켓들(markets)", type: "markets", required: req, placeholder: "KRW-BTC,KRW-ETH" }),
+  currency: (req = true) => ({ name: "currency", label: "통화(currency)", type: "currency", required: req, placeholder: "BTC / KRW" }),
+  netType: () => ({ name: "net_type", label: "네트워크(net_type)", type: "text", placeholder: "예: BTC, ETH, TRX (멀티 네트워크 코인 필수)", help: "단일 네트워크 코인은 비워도 됨; USDT 등 멀티네트워크 필수 TRX/ETH/SOL; withdraws/chance 응답 net_type 사용" }),
   amount: () => ({ name: "amount", label: "수량/금액(amount, 문자열 decimal)", type: "decimal", required: true, placeholder: "0.0 — 부동소수 금지, 문자열로 처리" }),
   limit: (d) => ({ name: "limit", label: "limit", type: "number", placeholder: String(d), default: String(d) }),
   orderBy: (d = "desc") => ({ name: "order_by", label: "order_by", type: "select", options: ["desc", "asc"], default: d }),
@@ -74,13 +75,13 @@ export const ENDPOINTS = [
   {
     id: "quotation.ticker", category: "quotation", method: "GET", path: "/v1/ticker",
     auth: false, label: "현재가(Ticker)", desc: "지정 마켓들의 현재가 스냅샷.",
-    fields: [{ name: "markets", label: "마켓들(markets, 콤마구분)", type: "text", required: true, placeholder: "KRW-BTC,KRW-ETH" }],
+    fields: [f.markets(true)],
   },
   {
     id: "quotation.orderbook", category: "quotation", method: "GET", path: "/v1/orderbook",
     auth: false, label: "호가(Orderbook)", desc: "지정 마켓들의 호가 정보.",
     fields: [
-      { name: "markets", label: "마켓들(markets, 콤마구분)", type: "text", required: true, placeholder: "KRW-BTC,KRW-ETH" },
+      f.markets(true),
       { name: "level", label: "호가 모아보기 단위(level)", type: "number" },
     ],
   },
@@ -131,7 +132,7 @@ export const ENDPOINTS = [
   // ---- 3. 주문 ------------------------------------------------------------
   {
     id: "orders.create", category: "orders", method: "POST", path: "/v1/orders",
-    auth: true, permission: "order", write: true, label: "주문하기(매수/매도)",
+    auth: true, permission: "order", write: true, preset: true, label: "주문하기(매수/매도)",
     desc: "지정가=volume+price / 시장가 매수(price)=price만 / 시장가 매도(market)=volume만.",
     fields: [
       f.market(true),
@@ -167,18 +168,18 @@ export const ENDPOINTS = [
   },
   {
     id: "orders.open", category: "orders", method: "GET", path: "/v1/orders/open",
-    auth: true, permission: "order_view", label: "미체결 주문 리스트(open)",
-    fields: [{ name: "market", label: "market", type: "text" }, { name: "state", label: "state", type: "select", options: ["", "wait", "watch"], default: "" }, { name: "states", label: "states[](콤마: wait,watch)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
+    auth: true, permission: "order_view", preset: true, label: "미체결 주문 리스트(open)",
+    fields: [{ name: "market", label: "market", type: "market", required: false }, { name: "state", label: "state", type: "select", options: ["", "wait", "watch"], default: "" }, { name: "states", label: "states[](콤마: wait,watch)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "orders.closed", category: "orders", method: "GET", path: "/v1/orders/closed",
-    auth: true, permission: "order_view", label: "종료 주문 리스트(closed)",
-    fields: [{ name: "market", label: "market", type: "text" }, { name: "state", label: "state", type: "select", options: ["", "done", "cancel"], default: "" }, { name: "states", label: "states[](콤마: done,cancel)", type: "array" }, f.startTime(), f.endTime(), f.limit(100), f.orderBy("desc")],
+    auth: true, permission: "order_view", preset: true, label: "종료 주문 리스트(closed)",
+    fields: [{ name: "market", label: "market", type: "market", required: false }, { name: "state", label: "state", type: "select", options: ["", "done", "cancel"], default: "" }, { name: "states", label: "states[](콤마: done,cancel)", type: "array" }, f.startTime(), f.endTime(), f.limit(100), f.orderBy("desc")],
   },
   {
     id: "orders.uuids", category: "orders", method: "GET", path: "/v1/orders/uuids",
     auth: true, permission: "order_view", label: "id로 주문 리스트 조회",
-    fields: [{ name: "market", label: "market", type: "text" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "identifiers", label: "identifiers[](콤마)", type: "array" }, f.orderBy("desc")],
+    fields: [{ name: "market", label: "market", type: "market", required: false }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "identifiers", label: "identifiers[](콤마)", type: "array" }, f.orderBy("desc")],
   },
   {
     id: "orders.cancel", category: "orders", method: "DELETE", path: "/v1/order",
@@ -193,11 +194,11 @@ export const ENDPOINTS = [
   },
   {
     id: "orders.cancel_bulk", category: "orders", method: "DELETE", path: "/v1/orders/open",
-    auth: true, permission: "order", write: true, label: "주문 일괄 취소",
+    auth: true, permission: "order", write: true, preset: true, label: "주문 일괄 취소",
     fields: [
       { name: "cancel_side", label: "cancel_side", type: "select", options: ["all", "ask", "bid"], default: "all" },
-      { name: "pairs", label: "pairs(콤마, 대상 마켓)", type: "text", placeholder: "KRW-BTC,KRW-ETH" },
-      { name: "excluded_pairs", label: "excluded_pairs(콤마)", type: "text" },
+      { name: "pairs", label: "pairs(콤마, 대상 마켓)", type: "markets", required: false, placeholder: "KRW-BTC,KRW-ETH" },
+      { name: "excluded_pairs", label: "excluded_pairs(콤마)", type: "markets", required: false },
       { name: "quote_currencies", label: "quote_currencies(콤마)", type: "text", placeholder: "KRW,BTC" },
       { name: "count", label: "count(최대 300)", type: "number" },
     ],
@@ -235,19 +236,19 @@ export const ENDPOINTS = [
   },
   {
     id: "deposits.list", category: "deposits", method: "GET", path: "/v1/deposits",
-    auth: true, permission: "deposit_view", pocketType: "main", label: "입금 리스트 조회",
+    auth: true, permission: "deposit_view", pocketType: "main", preset: true, label: "입금 리스트 조회",
     desc: "새로고침하며 외부 입금이 잡히는지 확인.",
-    fields: [{ name: "currency", label: "currency", type: "text", placeholder: "BTC / KRW" }, { name: "state", label: "state", type: "text", placeholder: "예: ACCEPTED" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
+    fields: [{ name: "currency", label: "currency", type: "currency", placeholder: "BTC / KRW" }, { name: "state", label: "state", type: "text", placeholder: "예: ACCEPTED" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "deposits.get", category: "deposits", method: "GET", path: "/v1/deposit",
     auth: true, permission: "deposit_view", pocketType: "main", label: "개별 입금 조회",
-    fields: [{ name: "uuid", label: "uuid", type: "text" }, { name: "txid", label: "txid", type: "text" }, { name: "currency", label: "currency", type: "text" }],
+    fields: [{ name: "uuid", label: "uuid", type: "text" }, { name: "txid", label: "txid", type: "text" }, { name: "currency", label: "currency", type: "currency" }],
   },
   {
     id: "deposits.krw", category: "deposits", method: "POST", path: "/v1/deposits/krw",
-    auth: true, permission: "deposit", write: true, pocketType: "main", label: "원화 입금하기",
-    fields: [{ name: "amount", label: "amount(원, decimal)", type: "decimal", required: true }, { name: "two_factor_type", label: "two_factor_type", type: "select", options: ["kakao", "naver", "hana"], default: "kakao" }],
+    auth: true, permission: "deposit", write: true, pocketType: "main", preset: true, label: "원화 입금하기",
+    fields: [{ name: "amount", label: "amount(원, decimal)", type: "decimal", required: true }, { name: "two_factor_type", label: "two_factor_type", type: "select", options: ["kakao", "naver", "hana"], default: "kakao", help: "업비트 계정 등록 2차인증 수단과 일치" }],
     verify: {
       title: "검증: 원화 입금 리스트로 대조",
       pairEndpointId: "deposits.list",
@@ -271,16 +272,16 @@ export const ENDPOINTS = [
   {
     id: "withdraws.list", category: "withdraws", method: "GET", path: "/v1/withdraws",
     auth: true, permission: "withdraw_view", pocketType: "main", label: "출금 리스트 조회",
-    fields: [{ name: "currency", label: "currency", type: "text" }, { name: "state", label: "state", type: "text", placeholder: "예: DONE" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
+    fields: [{ name: "currency", label: "currency", type: "currency" }, { name: "state", label: "state", type: "text", placeholder: "예: DONE" }, { name: "uuids", label: "uuids[](콤마)", type: "array" }, { name: "txids", label: "txids[](콤마)", type: "array" }, { name: "page", label: "page", type: "number" }, f.limit(100), f.orderBy("desc")],
   },
   {
     id: "withdraws.get", category: "withdraws", method: "GET", path: "/v1/withdraw",
     auth: true, permission: "withdraw_view", pocketType: "main", label: "개별 출금 조회",
-    fields: [{ name: "uuid", label: "uuid", type: "text" }, { name: "txid", label: "txid", type: "text" }, { name: "currency", label: "currency", type: "text" }],
+    fields: [{ name: "uuid", label: "uuid", type: "text" }, { name: "txid", label: "txid", type: "text" }, { name: "currency", label: "currency", type: "currency" }],
   },
   {
     id: "withdraws.coin", category: "withdraws", method: "POST", path: "/v1/withdraws/coin",
-    auth: true, permission: "withdraw", write: true, pocketType: "main", label: "디지털 자산 출금 요청",
+    auth: true, permission: "withdraw", write: true, pocketType: "main", preset: true, label: "디지털 자산 출금 요청",
     desc: "address 는 등록된 허용 주소만 드롭다운에서 선택.",
     fields: [
       f.currency(true), f.netType(), f.amount(),
@@ -288,7 +289,7 @@ export const ENDPOINTS = [
         dynamic: { endpointId: "withdraws.coin_addresses", dependsOn: ["currency", "net_type"],
           map: (body, p) => (Array.isArray(body) ? body : []).filter((a) => !p.currency || a.currency === p.currency).map((a) => ({ value: a.withdraw_address, label: `${a.currency}/${a.net_type || "-"} · ${a.withdraw_address}`, secondary: a.secondary_address })) } },
       { name: "secondary_address", label: "2차 주소/태그(secondary_address, opt)", type: "text" },
-      { name: "transaction_type", label: "transaction_type", type: "select", options: ["default", "internal"], default: "default" },
+      { name: "transaction_type", label: "transaction_type", type: "select", options: ["default", "internal"], default: "default", help: "default=일반 블록체인 출금, internal=업비트 내부 이동" },
     ],
     guard: (p) => (p.amount ? { cap_key: "limit_withdraw_coin", amount: String(p.amount), label: "코인 출금 수량" } : null),
     verify: {
@@ -300,8 +301,8 @@ export const ENDPOINTS = [
   },
   {
     id: "withdraws.krw", category: "withdraws", method: "POST", path: "/v1/withdraws/krw",
-    auth: true, permission: "withdraw", write: true, pocketType: "main", label: "원화 출금 요청",
-    fields: [{ name: "amount", label: "amount(원, decimal)", type: "decimal", required: true }, { name: "two_factor_type", label: "two_factor_type", type: "select", options: ["kakao", "naver", "hana"], default: "kakao" }],
+    auth: true, permission: "withdraw", write: true, pocketType: "main", preset: true, label: "원화 출금 요청",
+    fields: [{ name: "amount", label: "amount(원, decimal)", type: "decimal", required: true }, { name: "two_factor_type", label: "two_factor_type", type: "select", options: ["kakao", "naver", "hana"], default: "kakao", help: "업비트 계정 등록 2차인증 수단과 일치" }],
     guard: (p) => (p.amount ? { cap_key: "limit_withdraw_krw", amount: String(p.amount), label: "원화 출금액" } : null),
     verify: {
       title: "검증: 원화 출금 리스트로 대조",
@@ -329,7 +330,7 @@ export const ENDPOINTS = [
   },
   {
     id: "pockets.universal_transfers.create", category: "pockets", method: "POST", path: "/v1/pockets/universal_transfers",
-    auth: true, permission: "pocket_manage", pocketType: "main", write: true, label: "(d) 메인포켓 자산 이전",
+    auth: true, permission: "pocket_manage", pocketType: "main", write: true, preset: true, label: "(d) 메인포켓 자산 이전",
     desc: "메인↔서브 / 서브↔서브. from 미지정 시 키 포켓. from≠to.",
     fields: [
       { name: "from", label: "from(미지정 시 키 포켓)", type: "pocket" },
@@ -347,19 +348,19 @@ export const ENDPOINTS = [
   },
   {
     id: "pockets.universal_transfers.list", category: "pockets", method: "GET", path: "/v1/pockets/universal_transfers",
-    auth: true, permission: "pocket_manage", pocketType: "main", label: "(e) 메인포켓 이전 목록",
+    auth: true, permission: "pocket_manage", pocketType: "main", preset: true, label: "(e) 메인포켓 이전 목록",
     maxRangeDays: 7,
     fields: [
       { name: "from", label: "from", type: "pocket" }, { name: "to", label: "to", type: "pocket" },
       { name: "states", label: "states[](콤마: submitted,processing,done,failed)", type: "array" },
       { name: "uuids", label: "uuids[](포켓)", type: "pocket-array" },
       { name: "identifiers", label: "identifiers[](콤마)", type: "array" },
-      f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "text" }, f.limit(20), f.orderBy("desc"),
+      f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "currency" }, f.limit(20), f.orderBy("desc"),
     ],
   },
   {
     id: "pockets.transfers.create", category: "pockets", method: "POST", path: "/v1/pockets/transfers",
-    auth: true, permission: "transfer", pocketType: "sub", write: true, label: "(f) 서브포켓 자산 이전",
+    auth: true, permission: "transfer", pocketType: "sub", write: true, preset: true, label: "(f) 서브포켓 자산 이전",
     desc: "from 은 키의 서브포켓 고정. 서브→메인 / 서브→서브. to 미지정 시 메인포켓.",
     fields: [
       { name: "to", label: "to(미지정 시 메인포켓)", type: "pocket" },
@@ -375,7 +376,7 @@ export const ENDPOINTS = [
   },
   {
     id: "pockets.transfers.list", category: "pockets", method: "GET", path: "/v1/pockets/transfers",
-    auth: true, permission: "transfer", pocketType: "sub", label: "(g) 서브포켓 이전 목록",
+    auth: true, permission: "transfer", pocketType: "sub", preset: true, label: "(g) 서브포켓 이전 목록",
     maxRangeDays: 7,
     fields: [
       { name: "direction", label: "direction", type: "select", options: ["all", "in", "out"], default: "all" },
@@ -383,7 +384,7 @@ export const ENDPOINTS = [
       { name: "states", label: "states[](콤마)", type: "array" },
       { name: "uuids", label: "uuids[](포켓)", type: "pocket-array" },
       { name: "identifiers", label: "identifiers[](콤마)", type: "array" },
-      f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "text" }, f.limit(20), f.orderBy("desc"),
+      f.startTime(), f.endTime(), { name: "currency", label: "currency", type: "currency" }, f.limit(20), f.orderBy("desc"),
     ],
   },
 ];
@@ -397,3 +398,5 @@ export function endpointsFor(categoryId) {
 export function resolvePath(ep, params) {
   return typeof ep.path === "function" ? ep.path(params) : ep.path;
 }
+
+export const METHOD_BADGE = { GET: "badge-get", POST: "badge-post", PUT: "badge-post", DELETE: "badge-delete" };

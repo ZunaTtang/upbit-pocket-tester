@@ -29,13 +29,13 @@ export default function VerifyChecklist({ logId, items, initial }) {
   }
 
   return (
-    <div className="mt-2 border border-emerald-200 bg-emerald-50/60 rounded p-3">
-      <div className="text-sm font-semibold text-emerald-800 mb-2">
-        ✅ 검증 체크리스트 {allChecked && <span className="text-emerald-600">(모두 확인됨)</span>}
+    <div className="mt-2 rounded-control border border-ok-600/30 bg-ok-50/60 p-3">
+      <div className="text-sm font-semibold text-ok-800 mb-2">
+        ✅ 검증 체크리스트 {allChecked && <span className="text-ok-600">(모두 확인됨)</span>}
       </div>
       <div className="space-y-1">
         {items.map((it) => (
-          <label key={it.key} className="flex items-start gap-2 text-sm cursor-pointer">
+          <label key={it.key} className="flex items-start gap-2 text-sm text-ink-700 cursor-pointer">
             <input
               type="checkbox"
               className="mt-0.5"
@@ -50,12 +50,12 @@ export default function VerifyChecklist({ logId, items, initial }) {
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder="메모(선택) — 대조 결과, 특이사항 등"
-        className="mt-2 w-full text-sm border border-slate-300 rounded p-1.5 h-16"
+        className="mt-2 field-input h-16 resize-y"
       />
       <button
         onClick={save}
         disabled={saving || !logId}
-        className="mt-2 px-3 py-1 rounded bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50"
+        className="mt-2 btn btn-sm bg-ok-600 text-white hover:bg-ok-700 disabled:opacity-50"
       >
         {saving ? "저장 중…" : "체크리스트 저장(로그에 기록)"}
       </button>

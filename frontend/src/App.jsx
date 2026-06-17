@@ -18,17 +18,32 @@ export default function App() {
     loadAll().catch((e) => setErr(e.message));
   }, [loadAll]);
 
+  // Cross-component tab navigation: any child can request a tab switch by
+  // dispatching window CustomEvent "wb:navtab" with detail=tabId.
+  useEffect(() => {
+    const onNav = (e) => setTab(e.detail);
+    window.addEventListener("wb:navtab", onNav);
+    return () => window.removeEventListener("wb:navtab", onNav);
+  }, []);
+
   const isCategory = CATEGORIES.some((c) => c.id === tab);
 
+  const toastColor =
+    toast?.kind === "error"
+      ? "bg-danger-600"
+      : toast?.kind === "success"
+      ? "bg-ok-600"
+      : "bg-ink-800";
+
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-ink-50">
       <Banner />
       <KeyBar />
       <div className="flex flex-1 min-h-0">
         <Sidebar tab={tab} setTab={setTab} />
-        <main className="flex-1 overflow-y-auto p-5">
+        <main className="flex-1 overflow-y-auto px-6 py-6">
           {err && (
-            <div className="mb-4 text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded p-3">
+            <div className="callout-warn mb-4">
               백엔드 연결 실패: {err} — uvicorn 이 127.0.0.1:8000 에서 실행 중인지 확인하세요.
             </div>
           )}
@@ -41,9 +56,9 @@ export default function App() {
 
       {toast && (
         <div
-          className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded shadow-lg text-sm text-white ${
-            toast.kind === "error" ? "bg-rose-600" : toast.kind === "success" ? "bg-emerald-600" : "bg-slate-700"
-          }`}
+          role="status"
+          aria-live="polite"
+          className={`fixed bottom-4 right-4 z-50 px-4 py-2.5 rounded-control shadow-pop text-sm text-white ${toastColor}`}
         >
           {toast.msg}
         </div>

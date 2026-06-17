@@ -1,5 +1,12 @@
 import { create } from "zustand";
 import { api } from "./api";
+import {
+  mergeMarketOptions,
+  marketOptionsFromAll,
+  currenciesFromAll,
+  POPULAR_MARKETS,
+  POPULAR_CURRENCIES,
+} from "./catalogs";
 
 // Global app state: which key is active, the safety toggles/limits, and the
 // cached pocket list used to populate from/to/uuid dropdowns.
@@ -16,6 +23,7 @@ export const useStore = create((set, get) => ({
   },
   pockets: [], // [{uuid, name, pocket_type, ...}]
   pocketsLoadedAt: null,
+  marketCatalog: { markets: [], currencies: [], loadedAt: null, loading: false },
   baseUrl: "",
   presets: [],
   toast: null,
@@ -90,5 +98,38 @@ export const useStore = create((set, get) => ({
     else if (body && Array.isArray(body.pockets)) list = body.pockets;
     set({ pockets: list, pocketsLoadedAt: Date.now() });
     return list;
+  },
+
+  // Fetch GET /v1/market/all (public, no auth) once and cache the market/
+  // currency option lists used by the search pickers. Always sets
+  // marketCatalog with a fresh loadedAt; falls back to the popular presets
+  // when the request fails or returns an unexpected shape.
+  async loadMarketCatalog(force = false) {
+    const { marketCatalog } = get();
+    if (marketCatalog.loadedAt && !force) return;
+    set({ marketCatalog: { ...marketCatalog, loading: true } });
+    let markets = POPULAR_MARKETS;
+    let currencies = POPULAR_CURRENCIES;
+    try {
+      const res = await api.proxy({
+        key_id: null,
+        method: "GET",
+        path: "/v1/market/all",
+        params: { is_details: "false" },
+        authenticated: false,
+        endpoint_id: "quotation.market_all",
+        label: "마켓 카탈로그",
+      });
+      const body = res.response && res.response.body;
+      if (Array.isArray(body)) {
+        markets = mergeMarketOptions(POPULAR_MARKETS, marketOptionsFromAll(body));
+        currencies = currenciesFromAll(body);
+      }
+    } catch {
+      // keep the popular-preset fallback assigned above
+    }
+    set({
+      marketCatalog: { markets, currencies, loadedAt: Date.now(), loading: false },
+    });
   },
 }));

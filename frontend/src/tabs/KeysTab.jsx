@@ -56,44 +56,42 @@ export default function KeysTab() {
     setForm({ ...k, secret_key: "" });
   }
 
-  const input = "w-full border border-slate-300 rounded px-2 py-1 text-sm";
-
   return (
     <div className="max-w-4xl space-y-6">
-      <section className="bg-white border border-slate-200 rounded-lg p-4">
-        <h2 className="font-bold text-slate-800 mb-1">{editing ? "API 키 수정" : "API 키 등록"}</h2>
-        <p className="text-xs text-slate-500 mb-3">
+      <section className="card p-4">
+        <h2 className="section-title mb-1">{editing ? "API 키 수정" : "API 키 등록"}</h2>
+        <p className="field-help mb-3">
           secret_key 는 백엔드에서 암호화 저장되며 프론트로 다시 내려오지 않습니다. 권한 체크리스트는 UI 활성화 판단용 메타데이터입니다(실제 권한은 업비트가 강제).
         </p>
         <div className="grid sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-0.5">라벨</label>
-            <input className={input} value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="예: 메인-검증용" />
+            <label className="field-label">라벨</label>
+            <input className="field-input" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="예: 메인-검증용" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-0.5">포켓 유형</label>
-            <select className={input} value={form.pocket_type} onChange={(e) => setForm({ ...form, pocket_type: e.target.value })}>
+            <label className="field-label">포켓 유형</label>
+            <select className="field-input" value={form.pocket_type} onChange={(e) => setForm({ ...form, pocket_type: e.target.value })}>
               <option value="main">메인포켓</option>
               <option value="sub">서브포켓</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-0.5">Access Key</label>
-            <input className={input + " font-mono"} value={form.access_key} onChange={(e) => setForm({ ...form, access_key: e.target.value })} />
+            <label className="field-label">Access Key</label>
+            <input className="field-input field-mono" value={form.access_key} onChange={(e) => setForm({ ...form, access_key: e.target.value })} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-0.5">
-              Secret Key {editing && <span className="text-slate-400">(비우면 기존 유지)</span>}
+            <label className="field-label">
+              Secret Key {editing && <span className="text-ink-400 font-normal">(비우면 기존 유지)</span>}
             </label>
-            <input type="password" className={input + " font-mono"} value={form.secret_key} onChange={(e) => setForm({ ...form, secret_key: e.target.value })} />
+            <input type="password" className="field-input field-mono" value={form.secret_key} onChange={(e) => setForm({ ...form, secret_key: e.target.value })} />
           </div>
         </div>
 
         <div className="mt-3">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">부여 권한 체크리스트</label>
-          <div className="grid grid-cols-3 gap-1">
+          <label className="field-label">부여 권한 체크리스트</label>
+          <div className="grid grid-cols-3 gap-1.5">
             {PERMISSIONS.map((p) => (
-              <label key={p.key} className="flex items-center gap-1 text-sm">
+              <label key={p.key} className="flex items-center gap-1.5 text-sm text-ink-700">
                 <input type="checkbox" checked={form.permissions.includes(p.key)} onChange={() => togglePerm(p.key)} />
                 <span>{p.label}</span>
               </label>
@@ -102,38 +100,43 @@ export default function KeysTab() {
         </div>
 
         <div className="mt-4 flex gap-2">
-          <button onClick={submit} disabled={busy} className="px-4 py-1.5 rounded bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 disabled:opacity-50">
+          <button onClick={submit} disabled={busy} className="btn-primary">
             {editing ? "수정 저장" : "키 등록"}
           </button>
           {editing && (
-            <button onClick={() => setForm(EMPTY)} className="px-4 py-1.5 rounded border border-slate-300 text-sm">취소</button>
+            <button onClick={() => setForm(EMPTY)} className="btn-ghost">취소</button>
           )}
         </div>
       </section>
 
       <section>
-        <h2 className="font-bold text-slate-800 mb-2">등록된 키</h2>
+        <h2 className="section-title mb-2">등록된 키</h2>
         <div className="space-y-2">
-          {keys.length === 0 && <p className="text-sm text-slate-500">등록된 키가 없습니다.</p>}
+          {keys.length === 0 && (
+            <div className="empty-state">
+              <div className="text-3xl">🔑</div>
+              <p>등록된 키가 없습니다.</p>
+            </div>
+          )}
           {keys.map((k) => (
-            <div key={k.id} className={`bg-white border rounded-lg p-3 ${k.is_active ? "border-sky-400 ring-1 ring-sky-200" : "border-slate-200"}`}>
+            <div key={k.id} className={k.is_active ? "card p-3 border-brand-400 ring-1 ring-brand-200" : "card p-3"}>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-800">{k.label}</span>
-                <span className={`text-[11px] px-2 py-0.5 rounded ${k.pocket_type === "main" ? "bg-sky-100 text-sky-700" : "bg-violet-100 text-violet-700"}`}>
+                <span className="font-semibold text-ink-800">{k.label}</span>
+                <span className={`chip ${k.pocket_type === "main" ? "bg-brand-100 text-brand-700" : "bg-accent-violet-100 text-accent-violet-700"}`}>
                   {k.pocket_type === "main" ? "메인포켓" : "서브포켓"}
                 </span>
-                {k.is_active && <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold">활성</span>}
+                {k.is_active && <span className="chip bg-ok-100 text-ok-700 font-semibold">활성</span>}
                 <span className="ml-auto flex gap-2">
-                  {!k.is_active && <button onClick={() => setActive(k.id)} className="text-xs px-2 py-1 border border-slate-300 rounded">활성화</button>}
-                  <button onClick={() => editKey(k)} className="text-xs px-2 py-1 border border-slate-300 rounded">수정</button>
-                  <button onClick={() => remove(k.id)} className="text-xs px-2 py-1 border border-rose-300 text-rose-600 rounded">삭제</button>
+                  {!k.is_active && <button onClick={() => setActive(k.id)} className="btn-ghost btn-sm">활성화</button>}
+                  <button onClick={() => editKey(k)} className="btn-ghost btn-sm">수정</button>
+                  <button onClick={() => remove(k.id)} className="btn-ghost btn-sm border-danger-300 text-danger-600 hover:bg-danger-50">삭제</button>
                 </span>
               </div>
-              <div className="text-xs font-mono text-slate-500 mt-1 break-all">access: {k.access_key}</div>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {k.permissions.length === 0 && <span className="text-[11px] text-slate-400">권한 메타 없음</span>}
+              <div className="field-mono text-xs text-ink-500 mt-1 break-all">access: {k.access_key}</div>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {k.permissions.length === 0 && <span className="text-[11px] text-ink-400">권한 메타 없음</span>}
                 {k.permissions.map((p) => (
-                  <span key={p} className="text-[11px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                  <span key={p} className="chip">
                     {PERMISSIONS.find((x) => x.key === p)?.label || p}
                   </span>
                 ))}

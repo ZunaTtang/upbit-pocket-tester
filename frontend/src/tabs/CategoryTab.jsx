@@ -18,23 +18,30 @@ export default function CategoryTab({ categoryId }) {
   const eps = endpointsFor(categoryId);
 
   return (
-    <div className="max-w-4xl space-y-3">
-      <div className="flex items-center gap-3">
-        <h2 className="font-bold text-lg text-slate-800">{cat.label}</h2>
+    <div className="max-w-5xl space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <h2 className="section-title text-lg">{cat.label}</h2>
+        {cat.auth ? (
+          <span className="chip bg-warn-100 text-warn-800">🔒 인증 필요</span>
+        ) : (
+          <span className="chip bg-ok-100 text-ok-700">🔓 인증 불필요</span>
+        )}
         {categoryId === "pockets" && (
           <button
             onClick={() => loadPockets(true)}
             disabled={!activeKey}
-            className="text-xs px-2 py-1 border border-slate-300 rounded bg-white disabled:opacity-40"
+            className="btn-ghost btn-sm ml-auto"
           >
             ↻ 포켓 목록 불러오기(드롭다운 채우기)
           </button>
         )}
       </div>
-      <p className="text-sm text-slate-500">{INTROS[categoryId]}</p>
-      {eps.map((ep) => (
-        <EndpointRunner key={ep.id} endpoint={ep} />
-      ))}
+      <p className="text-sm text-ink-600 leading-relaxed">{INTROS[categoryId]}</p>
+      <div className="space-y-4">
+        {eps.map((ep) => (
+          <EndpointRunner key={ep.id} endpoint={ep} />
+        ))}
+      </div>
     </div>
   );
 }

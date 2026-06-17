@@ -1,30 +1,46 @@
 import { useState } from "react";
 
 export function CopyButton({ value, label = "복사" }) {
-  const [done, setDone] = useState(false);
+  const [state, setState] = useState("idle"); // idle | done | fail
   return (
     <button
       type="button"
       onClick={async () => {
+        const text =
+          typeof value === "string" ? value : JSON.stringify(value, null, 2);
+        const flash = (s) => {
+          setState(s);
+          setTimeout(() => setState("idle"), 1200);
+        };
         try {
-          await navigator.clipboard.writeText(
-            typeof value === "string" ? value : JSON.stringify(value, null, 2)
-          );
-          setDone(true);
-          setTimeout(() => setDone(false), 1200);
+          await navigator.clipboard.writeText(text);
+          flash("done");
         } catch {
-          /* clipboard may be blocked on file:// — ignore */
+          // clipboard may be blocked on file:// — try legacy fallback.
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            flash(ok ? "done" : "fail");
+          } catch {
+            flash("fail");
+          }
         }
       }}
-      className="text-xs px-2 py-0.5 rounded border border-slate-300 bg-white hover:bg-slate-50"
+      className="btn-ghost btn-sm"
     >
-      {done ? "✓ 복사됨" : label}
+      {state === "done" ? "✓ 복사됨" : state === "fail" ? "복사 실패" : label}
     </button>
   );
 }
 
 // Collapsible JSON viewer with a copy button.
-export default function JsonView({ title, data, defaultOpen = true, maxHeight = "20rem" }) {
+export default function JsonView({ title, data, defaultOpen = true, maxHeight = "24rem" }) {
   const [open, setOpen] = useState(defaultOpen);
   const text =
     data === null || data === undefined
@@ -33,19 +49,19 @@ export default function JsonView({ title, data, defaultOpen = true, maxHeight = 
       ? data
       : JSON.stringify(data, null, 2);
   return (
-    <div className="border border-slate-200 rounded bg-slate-50">
-      <div className="flex items-center justify-between px-2 py-1 border-b border-slate-200">
+    <div className="border border-ink-200 rounded-control bg-ink-50">
+      <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-ink-200">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="text-xs font-semibold text-slate-600"
+          className="text-xs font-semibold text-ink-700"
         >
           {open ? "▾" : "▸"} {title}
         </button>
         <CopyButton value={text} />
       </div>
       {open && (
-        <pre className="json-block p-2 overflow-auto" style={{ maxHeight }}>
+        <pre className="json-block p-3 overflow-auto" style={{ maxHeight }}>
           {text}
         </pre>
       )}
